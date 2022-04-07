@@ -1,0 +1,24 @@
+use example;
+
+db.createCollection("col1");
+
+db.col2.insertOne({title: "foo"});
+db.col2.insertOne({description: "foo"});
+
+// Specify the _id field
+db.col2.insertOne({_id: 1, description: "foo"});
+db.col2.insertOne({_id: "test1", description: "foo"});
+
+// Delete query
+db.col2.deleteOne({description: "foo"});
+db.col2.deleteMany({description: "foo"});
+
+// Update query
+db.col2.updateOne({description: "foo"}, {$set: {title: 'title'}});
+db.col2.updateMany({description: "foo"}, {$set: {title: 'title'}});
+
+db.col2.find();
+
+db.DBEnvyLoad_orders.find({ invoiceDate: { $gte: new Date("2016-01-01T06:08:29.702Z"), $lte: new Date("2017-11-24T06:08:29.702Z") }, $or: [{ CustId: 57852 }, { CustId: 56466 }] })
+db.DBEnvyLoad_orders.find({ invoiceDate: { $gte: new Date("2016-01-01T06:08:29.702Z"), $lte: new Date("2017-11-24T06:08:29.702Z") }, $or: [{ CustId: 57852 }, { CustId: 56466 }] }).toArray().length
+db.DBEnvyLoad_orders.find({ invoiceDate: { $gte: new Date("2016-01-01T06:08:29.702Z"), $lte: new Date("2017-11-24T06:08:29.702Z") }, $or: [{ CustId: 57852 }, { CustId: 56466 }] }).toArray().map(i => ({id: i._id, status: i.orderStatus}))
