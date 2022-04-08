@@ -22,3 +22,42 @@ db.col2.find();
 db.DBEnvyLoad_orders.find({ invoiceDate: { $gte: new Date("2016-01-01T06:08:29.702Z"), $lte: new Date("2017-11-24T06:08:29.702Z") }, $or: [{ CustId: 57852 }, { CustId: 56466 }] })
 db.DBEnvyLoad_orders.find({ invoiceDate: { $gte: new Date("2016-01-01T06:08:29.702Z"), $lte: new Date("2017-11-24T06:08:29.702Z") }, $or: [{ CustId: 57852 }, { CustId: 56466 }] }).toArray().length
 db.DBEnvyLoad_orders.find({ invoiceDate: { $gte: new Date("2016-01-01T06:08:29.702Z"), $lte: new Date("2017-11-24T06:08:29.702Z") }, $or: [{ CustId: 57852 }, { CustId: 56466 }] }).toArray().map(i => ({id: i._id, status: i.orderStatus}))
+
+db.DBEnvyLoad_orders.find();
+
+// Grouper par items et calculer la moyenne du nombre de produits commandés par commande et afficher l'ensemble des n° de commande
+db.DBEnvyLoad_orders.aggregate([
+    // Découpe les lignes de commandes par produit
+    {$unwind: '$lineItems'},
+    // Groupe les lignes de commandes par produit
+    // + calcul de la moyenne
+    // + création d'une sous-collection de n° de commande
+    {$group: {_id: "$lineItems.prodId", avg: {$avg: '$lineItems.prodCount'}, orders: {$addToSet: "$_id"}}}
+]);
+
+
+// Grouper par items et calculer la moyenne du nombre de produits commandés par commande et afficher l'ensemble des n° de commande
+
+// Grouper par items et calculer la moyenne du nombre de produits commandés par commande de l'utilisateur 57852 et afficher l'ensemble des n° de commande
+db.DBEnvyLoad_orders.aggregate([
+    {$match: {"CustId": 57852}},
+    // Découpe les lignes de commandes par produit
+    {$unwind: '$lineItems'},
+    // Groupe les lignes de commandes par produit
+    // + calcul de la moyenne
+    // + création d'une sous-collection de n° de commande
+    {$group: {_id: "$lineItems.prodId", avg: {$avg: '$lineItems.prodCount'}, orders: {$addToSet: {order_id:"$_id", CustId: "$CustId"}}}},
+]);
+
+// Grouper par items et calculer la moyenne du nombre de produits commandés par commande du site complet et afficher l'ensemble des n° de commande
+// et retourner uniquement les produits commandés par l'utilisateur 57852
+db.DBEnvyLoad_orders.aggregate([
+    // Découpe les lignes de commandes par produit
+    {$unwind: '$lineItems'},
+    // Groupe les lignes de commandes par produit
+    // + calcul de la moyenne
+    // + création d'une sous-collection de n° de commande
+    {$group: {_id: "$lineItems.prodId", avg: {$avg: '$lineItems.prodCount'}, orders: {$addToSet: {order_id:"$_id", CustId: "$CustId"}}}},
+    {$match: {"orders.CustId": 57852}},
+    {$project: {_id: 0, prodId: "$_id", avg: "$avg", orders: "$orders.order_id"}}
+]);

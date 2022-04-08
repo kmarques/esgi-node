@@ -24,3 +24,16 @@ db.DBEnvyLoad_orders.find({
         { CustId: 55175 }
     ] 
 });
+
+db.Sakila_films.aggregate([
+    // Applatit la collection par Acteurs (1 doc avec 6 acteurs => 6 docs)
+    {$unwind: "$Actors"},
+    // Ajoute une colonne Actor valant Actors
+    {$set: {Actor: "$Actors"}},
+    // Supprime la colonne Actors
+    {$project: {Actors: 0}},
+    // Group par Acteur et construit une liste de film
+    {$group: {_id: "$Actor", movies: {$addToSet: "$Title"}}}, 
+    // Génère une nouvelle collection newCollection contenant le résultat
+    {$out: 'newCollection'}
+]);
