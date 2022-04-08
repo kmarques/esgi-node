@@ -5,10 +5,13 @@ services:
     image: mongo
     ports:
       - 27017:27017
-    environment:
+    environment: 
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - ./SampleCollections:/usr/local/sampleCollections
+      - db-data:/data/db
     working_dir: /usr/local/sampleCollections
 
+volumes:
+  db-data: {}
