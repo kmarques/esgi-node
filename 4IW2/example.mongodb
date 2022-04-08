@@ -1,0 +1,26 @@
+use example2;
+
+db.createCollection("collection1");
+
+db.collection1.insertOne({ title: "Foo"});
+db.collection1.insertOne({_id: 1234, title: "Foo"});
+db.collection1.insertOne({ description: "Foo"});
+
+db.collection2.insertOne({ description: "Foo"});
+
+
+
+db.collection1.updateOne({title: 'Bar'}, {$set: {description: "Bar", title: 'Foo'}});
+db.collection1.updateMany({title: 'Foo'}, {$set: {title: "Bar"}});
+
+db.collection2.deleteOne({ description: "Foo"});
+db.collection2.drop()
+
+db.DBEnvyLoad_orders.find({ 
+    orderStatus: 'C', 
+    invoiceDate: { $gte: new Date("2016-01-01T06:08:29.308Z"), $lte: new Date("2017-11-24T06:08:29.308Z") },
+    $or: [
+        { CustId: 58324 },
+        { CustId: 55175 }
+    ] 
+});

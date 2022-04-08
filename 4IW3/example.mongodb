@@ -1,0 +1,30 @@
+use("example3");
+db.createCollection("collection1");
+
+db.collection1.insertOne({title: "Foo"});
+db.collection1.insertOne({title: "Foo", _id: 1234});
+db.collection1.insertMany([{_id: "test@test.com", firstName: "Will"}, {_id: 12355, lastName: "Rock"}]);
+
+db.collection2.insertMany([{_id: "test@test.com", firstName: "Will"}, {_id: 12355, lastName: "Rock"}]);
+
+db.collection1.deleteOne({title: "Foo"});
+db.collection1.deleteMany({title: "Foo"});
+
+db.collection1.updateOne({title:"Foo"}, {$set: {title: "Bar"}});
+db.collection1.updateOne({title:"Foo"}, {$set: {title: "Bar"}}, {upsert: true});
+db.collection1.updateMany({title:"Bar"}, {$set: {description: "Bar"}});
+
+use(SampleCollections);
+
+db.DBEnvyLoad_orders.find().limit(3);
+db.DBEnvyLoad_orders.find({
+    orderStatus: 'C',
+    invoiceDate: { 
+        $gt: new Date(2010 - 01 - 01), 
+        $lt: new Date("2022-01-01")
+    }, 
+    $or: [ 
+        { CustId: 58324 },
+        { CustId: 55175 }
+    ]
+});
