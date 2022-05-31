@@ -1,0 +1,15 @@
+use('SampleCollections');
+
+//1) Rechercher tous les films dont la description comprend “documentary” et de catégorie “horror”
+db.Sakila_films.find({
+    description: {$regex: "documentary", $options: "i"},
+    category: "Horror"
+});
+db.Sakila_films.find({
+    description: /documentary/i,
+    category: "Horror"
+});
+db.Sakila_films.find({
+    description: /documentary/i,
+    category: /^horror$/i
+});

@@ -1,0 +1,67 @@
+use SampleCollections;
+
+// Rechercher tous les films dont la description comprend “documentary” et de catégorie “horror”
+db.Sakila_films.find({
+    "Description": /documentary/i,
+    "Category": "Horror"
+});
+db.Sakila_films.find({
+    "Description": /documentary/i,
+    "Category": /^horror$/i
+});
+
+// Donner le nombre de films en rating “G”
+db.Sakila_films.find({
+    "Rating": "G"
+}).count();
+db.Sakila_films.count({
+    "Rating": "G"
+});
+db.Sakila_films.countDocuments({
+    "Rating": "G"
+});
+db.Sakila_films.find({
+    "Rating": "G"
+}).toArray().length;
+db.Sakila_films.aggregate([
+    {$match: {"Rating": "G"}},
+    {$count: "total_films"}
+]);
+// Rechercher tous les films de 2013 ou 2012 dont la durée est entre 60 et 150 minutes
+db.video_movieDetails.find({
+    "year": {
+        $in: [2013, 2012]
+    },
+    "runtime": {$gte: 60,$lte: 150}
+});
+db.video_movieDetails.find({
+    $or: [
+        {
+            "year": 2013
+        },
+        {
+            "year": 2012
+        }
+    ],
+    "runtime": {
+        $gte: 60,
+        $lte: 150
+    }
+});
+
+// Rechercher tous les films qui ont une image certified sur tomato
+db.video_movieDetails.find({
+    "tomato.image": "certified"
+});
+
+// Rechercher tous les films avec l’acteur ED CHASE
+db.Sakila_films.find({
+    "Actors": {$elemMatch: {"First name": "ED","Last name": "CHASE"}}
+});
+
+// Afficher tous les rating et le nombre de films pour chacun
+db.Sakila_films.aggregate([
+    {$group: {_id: "$Rating", count: {$sum: 1}}}
+    {$set: {rated: "$_id"}}
+    {$project: {_id: 0}}
+]);
