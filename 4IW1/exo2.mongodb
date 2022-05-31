@@ -1,0 +1,84 @@
+// Collections: video_movieDetails
+db.video_movieDetails.find();
+/*
+1) Afficher la liste des Acteurs contenant la liste des rated des films dans lesquelles ils ont joué. 
+Pour chaque Rated, afficher la moyenne des notes imdb de ces films ainsi que la liste des 
+films (titre + note). Ne prendre en compte que les films qui ont eu une note imdb > 8
+*/
+db.video_movieDetails.aggregate([
+    {$match: {"imdb.rating": {$gte: 8}}},
+    {$sort: {"released": 1}},
+    {$unwind: "$actors"},
+    {$group: {
+        _id: {actor: "$actors", rated: "$rated"},
+        movies: {$addToSet: {title: "$title", imdb: "$imdb.rating"}},
+        avg_rating: {$avg: "$imdb.rating"}
+    }},
+    {$group: {
+        _id: {actor: "$_id.actor"},
+        rateds: {
+            $addToSet: {
+                rated: "$_id.rated", 
+                movies: "$movies",
+                avg_rating: "$avg_rating"
+            }
+        },
+    }}
+]);
+
+/*
+2) Lister pour chaque genre de films, les différents rated avec le pire film et le meilleur film selon 
+imdb
+*/
+db.video_movieDetails.aggregate([
+    {$sort: {"imdb.rating": 1, "title": 1}},
+    {$unwind: "$genres"},
+    {$group: {
+        _id: {genre: "$genres", rated: "$rated"},
+        worst_movie: {$first: "$title"},
+        worst_movie_rate: {$first: "$imdb.rating"},
+        best_movie: {$last: "$title"},
+        best_movie_rate: {$last: "$imdb.rating"}
+    }},
+    {$group: {
+        _id: {genre: "$_id.genre"},
+        rateds: {
+            $addToSet: {
+                rated: "$_id.rated", 
+                worst_movie: {
+                    title: "$worst_movie",
+                    rate: "$worst_movie_rate"
+                },
+                best_movie: {
+                    title: "$best_movie",
+                    rate: "$best_movie_rate"
+                }
+            }
+        },
+    }}
+    // <=> {$group: {
+    //    _id: {genre: "$genres", rated: "$rated"},
+    //    worst_movie: {
+    //        $min: {
+    //            rate: "$imdb.rating",
+    //            title: "$title"
+    //        }
+    //    },
+    //    best_movie: {
+    //        $max: {
+    //            rate: "$imdb.rating",
+    //            title: "$title"
+    //        }
+    //    }
+    //}},
+    //{$group: {
+    //    _id: "$_id.genre",
+    //    rateds: {
+    //        $addToSet: {
+    //            rated: "$_id.rated", 
+    //            worst_movie: "$worst_movie",
+    //            best_movie: "$best_movie"
+    //        }
+    //    },
+    //}}
+]);
