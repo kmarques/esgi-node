@@ -5,13 +5,21 @@ services:
     image: mongo
     ports:
       - 27017:27017
-    environment: 
+    environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - ./SampleCollections:/usr/local/sampleCollections
       - db-data:/data/db
     working_dir: /usr/local/sampleCollections
+
+  node-4IW1:
+    image: node:alpine
+    volumes:
+      - ./4IW1:/usr/local/4IW1
+    working_dir: /usr/local/4IW1
+    ports:
+      - 127.0.0.1:3000:3000
 
 volumes:
   db-data: {}
