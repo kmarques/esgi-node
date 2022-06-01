@@ -1,0 +1,11 @@
+{
+  "name": "project-manager",
+  "version": "1.0.0",
+  "description": "Find node project and execute scripts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
