@@ -1,0 +1,102 @@
+//Collections: video_movieDetails
+
+/*
+1) Afficher la liste des Acteurs contenant la liste des rated des films dans lesquelles ils ont joué. 
+Pour chaque Rated, afficher la moyenne des notes imdb de ces films ainsi que la liste des 
+films (titre + note). Ne prendre en compte que les films qui ont eu une note imdb > 8
+*/
+db.video_movieDetails.aggregate([
+    {$match: {'imdb.rating': {$gte: 8}}},
+    {$sort: {"released": 1}}, 
+    {$unwind: '$actors'},
+    {$group: {
+        _id: {actor: "$actors", rated: "$rated"},
+        avg_rating: {$avg: "$imdb.rating"},
+        movies: {
+            $addToSet: {
+                title: '$title',
+                rating: '$imdb.rating'
+            }
+        }
+    }},
+    {$group: {
+        _id: '$_id.actor',
+        rateds: {
+            $addToSet: {
+                rated: "$_id.rated",
+                movies: "$movies",
+                avg_rating: "$avg_rating"
+            }
+        }
+    }},
+    {$match: {_id: "Mark Ruffalo"}}
+]);
+
+/*
+2) Lister pour chaque genre de films, les différents rated avec le pire film et le meilleur film selon 
+imdb
+*/
+
+db.video_movieDetails.aggregate([
+    {$match: {
+        rated: {$ne: null},
+        "imdb.rating": {$ne: null}
+    }},
+    {$unwind: "$genres"},
+    {$group: {
+        _id: {genre: "$genres", rated: "$rated"},
+        bestMovie: {
+            $max: {
+                note: "$imdb.rating",
+                title: "$title"
+            }
+        },
+        worstMovie: {
+            $min: {
+                note: "$imdb.rating",
+                title: "$title"
+            }
+        }
+    }},
+    {$group: {
+        _id: "$_id.genre",
+        rateds: {
+            $addToSet: {
+                rated: "$_id.rated",
+                bestMovie:"$bestMovie",
+                worstMovie:"$worstMovie",
+            }
+        }
+    }}
+]);
+db.video_movieDetails.aggregate([
+    {$match: {
+        rated: {$ne: null},
+        "imdb.rating": {$ne: null}
+    }},
+    {$sort: {"imdb.rating": -1, "title": -1}},
+    {$unwind: "$genres"},
+    {$group: {
+        _id: {genre: "$genres", rated: "$rated"},
+        bestMovieTitle: {$first: "$title"},
+        bestMovieNote: {$first: "$imdb.rating"},
+        worstMovieTitle: {$last: "$title"},
+        worstMovieNote: {$last: "$imdb.rating"},
+    }},
+    {$group: {
+        _id: "$_id.genre",
+        rateds: {
+            $addToSet: {
+                rated: "$_id.rated",
+                bestMovie:{
+                    title: "$bestMovieTitle",
+                    note: "$bestMovieNote"
+                },
+                worstMovie:{
+                    title: "$worstMovieTitle",
+                    note: "$worstMovieNote"
+                },
+            }
+        }
+    }}
+]);
