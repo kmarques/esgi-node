@@ -28,3 +28,30 @@ db.DBEnvyLoad_orders.find({
         { CustId: 55175 }
     ]
 });
+
+db.Sakila_films.aggregate([
+    {$unwind: "$Actors"},
+    {$group: {
+        _id: {
+            id: "$Actors.actorId",
+            LastName: "$Actors.Last name",
+            FirstName: "$Actors.First name",
+        },
+        movies: {
+            $addToSet: {title: "$Title", rated: "$Rating"}
+        }
+    }},
+    {$sort: {"_id.id": 1}},
+    {$addFields: {
+        "actorId": "$_id.id",
+        "actorFullName": {$concat: ["$_id.FirstName", " ", "$_id.LastName"]},
+    }},
+    {$project: {
+        _id: 0,
+        actorId: 1,
+        movies: 1,
+        actorFullName: 1,
+    }}, 
+    {$skip: 1},
+    {$limit: 2}
+])
