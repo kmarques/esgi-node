@@ -1,0 +1,79 @@
+/*
+1) Afficher la liste des Acteurs contenant la liste des rated des films dans lesquelles ils ont joué. 
+Pour chaque Rated, afficher la moyenne des notes imdb de ces films ainsi que la liste des films (titre + note). Ne prendre en compte que les films qui ont eu une note imdb > 8
+*/
+//db.video_movieDetails.find().limit(1);
+db.video_movieDetails.aggregate([
+    {$match: {'imdb.rating': {$gte: 8}}},
+    {$sort: {'released': 1}},
+    {$unwind: "$actors"},
+    {$group: {
+        _id: {"actor": "$actors", rated: "$rated"},
+        avg: {$avg: "$imdb.rating"},
+        movies: {$push: {
+            title: "$title", rating: "$imdb.rating"
+        }}
+    }},
+    {$group: {
+        _id: "$_id.actor",
+        rateds: {$push: {
+            rated: "$_id.rated",
+            avg: "$avg",
+            movies: "$movies"
+        }}
+    }}
+]);
+
+/*
+2) Lister pour chaque genre de films, les différents rated avec le pire film et le meilleur film selon 
+imdb
+*/
+db.video_movieDetails.aggregate([
+    {$unwind: "$genres"},
+    {$group: {
+        _id: {genre: "$genres", rated: "$rated"},
+        bestMovie: {$max: {
+            rating: "$imdb.rating",
+            title: "$title"
+        }},
+        worstMovie: {$min: {
+            rating: "$imdb.rating",
+            title: "$title"
+        }},
+    }},
+    {$group: {
+        _id: "$_id.genre",
+        rateds: {$push: {
+            rated: "$_id.rated",
+            bestMovie: "$bestMovie",
+            worstMovie: "$worstMovie"
+        }}
+    }}
+]);
+
+db.video_movieDetails.aggregate([
+    {$unwind: "$genres"},
+    {$sort: {"imdb.rating": 1, "title": 1}},
+    {$group: {
+        _id: {genre: "$genres", rated: "$rated"},
+        bestMovieTitle: {$last: "$title"},
+        bestMovieNote: {$last: "$imdb.rating"},
+        worstMovieTitle: {$first: "$title"
+        },
+        worstMovieNote: {$first: "$imdb.rating"
+        },
+    }},
+    {$group: {
+        _id: "$_id.genre",
+        rateds: {$push: {
+            rated: "$_id.rated",
+            bestMovie: {
+                title: "$bestMovieTitle",
+                rating: "$bestMovieNote"},
+            worstMovie: {
+                title: "$worstMovieTitle",
+                rating: "$worstMovieNote"
+            }
+        }}
+    }}
+]);
