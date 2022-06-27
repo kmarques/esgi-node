@@ -1,0 +1,24 @@
+GET http://localhost:3000/http-codes
+
+###
+POST http://localhost:3000/http-codes
+Content-Type: application/json
+
+{
+    "code": "OK",
+    "message": "OK"
+}
+
+###
+GET http://localhost:3000/http-codes/62b98762884925af68acba0e
+
+###
+PUT http://localhost:3000/http-codes/62b98762884925af68acba0e
+Content-Type: application/json
+
+{
+    "code": 200,
+    "message": "ok"
+}
+###
+DELETE http://localhost:3000/http-codes/62b989c6b1d4a19ea9b679bd
