@@ -1,0 +1,40 @@
+version: '3.6'
+
+services:
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - ./SampleCollections:/usr/local/sampleCollections
+      - mongo-data:/data/db
+    working_dir: /usr/local/sampleCollections
+
+  server:
+    image: node:alpine
+    volumes:
+      - ./server:/usr/local/server
+    working_dir: /usr/local/server
+    environment:
+      - PORT=3000
+      - MONGO_URL=mongodb://root:password@mongo:27017/app?authSource=admin
+      - DB_URL=postgres://root:password@db/app
+      - JWT_SECRET=mySecret
+    ports:
+      - 127.0.0.1:3000:3000
+    command: npm start
+
+  db:
+    image: postgres:alpine
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=app
+volumes:
+  mongo-data: {}
+  db-data: {}
