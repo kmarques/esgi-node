@@ -23,3 +23,32 @@ Content-Type: application/json
 
 ###
 DELETE http://localhost:3000/products/62bad3f1460bb3c57d228826
+
+###############################
+#######      User       #######
+###############################
+GET http://localhost:3000/api/users
+
+###
+GET http://localhost:3000/api/users/1
+
+###
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+    "email": "ok@ok.com",
+    "password": "dsfcsdvcsd",
+    "name": "Test"
+}
+
+###
+PUT http://localhost:3000/api/users/2
+Content-Type: application/json
+
+{
+    "name": "Test2"
+}
+
+###
+DELETE http://localhost:3000/api/users/1

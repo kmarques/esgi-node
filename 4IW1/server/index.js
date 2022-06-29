@@ -1,6 +1,6 @@
 const express = require("express");
 const ProductRouter = require("./routes/product");
-
+const UserRouter = require("./routes/user");
 const app = express();
 
 app.use(express.json());
@@ -17,8 +17,7 @@ app.get("/", (req, res, next) => {
   });
 });
 
-app.use("/api", ProductRouter);
-app.use(ProductRouter);
+app.use("/api", ProductRouter, UserRouter);
 
 app.listen(process.env.PORT, () => {
   console.log("Server is listening on port " + process.env.PORT);
