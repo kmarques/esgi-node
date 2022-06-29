@@ -22,3 +22,51 @@ Content-Type: application/json
 }
 ###
 DELETE http://localhost:3000/http-codes/62b989c6b1d4a19ea9b679bd
+
+###
+GET http://localhost:3000/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZmlyc3RuYW1lIjoiT0siLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE2NTY0OTM3MDMsImV4cCI6MTY4ODA1MTMwM30.IjBfkDbswLuVq1z1ta5G9oynrJC0jTRe5znvQVLRh5k
+
+###
+GET http://localhost:3000/users/1
+
+###
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "email": "ok@ok.com",
+    "password": "OKOKOK",
+    "firstname": "OK"
+}
+
+###
+PUT http://localhost:3000/users/2
+Content-Type: application/json
+
+{
+    "firstname": "O"
+}
+
+###
+DELETE http://localhost:3000/users/3
+
+
+###
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+    "email": "ok2@ok.com",
+    "password": "OKOKOK",
+    "firstname": "OK"
+}
+
+###
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email": "ok2@ok.com",
+    "password": "OKOKOK"
+}

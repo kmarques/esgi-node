@@ -1,5 +1,6 @@
 const https = require("https");
 const http = require("http");
+const { JSDOM } = require("jsdom");
 
 module.exports = function Scrapper(url, options = {}, callback) {
   const protocol = url.startsWith("https") ? https : http;
@@ -37,6 +38,10 @@ module.exports = function Scrapper(url, options = {}, callback) {
         if (res.headers["content-type"].indexOf("application/json") !== -1) {
           const charset = res.headers["content-type"].match(/charset=([\w-]+)/);
           result = JSON.parse(data.toString(charset[1]));
+        }
+        if (res.headers["content-type"].indexOf("html") !== -1) {
+          const dom = new JSDOM(data.toString());
+          result = dom.window.document;
         }
         // Traiter la réponse
         callback({ status: res.statusCode, result });

@@ -10,8 +10,12 @@
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.18.1",
-    "mongoose": "^6.4.0"
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.4.0",
+    "pg": "^8.7.3",
+    "sequelize": "^6.21.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.18"
