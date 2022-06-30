@@ -27,6 +27,17 @@ services:
       - 127.0.0.1:3000:3000
     command: npm start
 
+  client:
+    image: node:alpine
+    volumes:
+      - ./client:/usr/local/server
+    working_dir: /usr/local/server
+    environment:
+      - REACT_API_URL=http://server:3000
+    ports:
+      - 127.0.0.1:3001:3000
+    command: npm start
+
   db:
     image: postgres:alpine
     volumes:
