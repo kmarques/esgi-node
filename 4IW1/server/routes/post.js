@@ -1,23 +1,26 @@
 const { Router } = require("express");
-const { User } = require("../models/postgres");
+const { Post, User } = require("../models/postgres");
 const { ValidationError } = require("sequelize");
 
 const router = new Router();
 
-router.get("/users", async (req, res) => {
+router.get("/posts", async (req, res) => {
   try {
-    const users = await User.findAll({ where: req.query });
-    res.json(users);
+    const posts = await Post.findAll({
+      where: req.query,
+      include: [{ model: User, as: "user", attributes: ["id", "name"] }],
+    });
+    res.json(posts);
   } catch (error) {
     res.sendStatus(500);
     console.error(error);
   }
 });
 
-router.post("/users", async (req, res) => {
+router.post("/posts", async (req, res) => {
   try {
-    const user = await User.create(req.body);
-    res.status(201).json(user);
+    const post = await Post.create(req.body);
+    res.status(201).json(post);
   } catch (error) {
     if (error instanceof ValidationError) {
       res.status(422).json({
@@ -31,9 +34,9 @@ router.post("/users", async (req, res) => {
   }
 });
 
-router.put("/users/:id", async (req, res) => {
+router.put("/posts/:id", async (req, res) => {
   try {
-    const result = await User.update(req.body, {
+    const result = await Post.update(req.body, {
       where: { id: req.params.id },
       returning: true,
       individualHooks: true,
@@ -58,9 +61,9 @@ router.put("/users/:id", async (req, res) => {
   }
 });
 
-router.delete("/users/:id", async (req, res) => {
+router.delete("/posts/:id", async (req, res) => {
   try {
-    const nbLine = await User.destroy({ where: { id: req.params.id } });
+    const nbLine = await Post.destroy({ where: { id: req.params.id } });
     if (!nbLine) {
       res.sendStatus(404);
     } else {
@@ -72,13 +75,13 @@ router.delete("/users/:id", async (req, res) => {
   }
 });
 
-router.get("/users/:id", async (req, res) => {
+router.get("/posts/:id", async (req, res) => {
   try {
-    const user = await User.findByPk(req.params.id);
-    if (!user) {
+    const post = await Post.findByPk(req.params.id);
+    if (!post) {
       res.sendStatus(404);
     } else {
-      res.json(user);
+      res.json(post);
     }
   } catch (error) {
     res.sendStatus(500);

@@ -28,9 +28,11 @@ DELETE http://localhost:3000/products/62bad3f1460bb3c57d228826
 #######      User       #######
 ###############################
 GET http://localhost:3000/api/users
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6IlRlc3QiLCJpYXQiOjE2NTY1NzI5NzIsImV4cCI6MTY4ODEzMDU3Mn0.aMFNb1hEWujdluywNN0M68oCeERJRWvbKrKS9zup-U8i3j_Do_Ryl7flIMKcj38KpOfSwVL2PwDH1N3iaoyxBw
 
 ###
-GET http://localhost:3000/api/users/1
+GET http://localhost:3000/api/users/8
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6IlRlc3QiLCJpYXQiOjE2NTY1NzI5NzIsImV4cCI6MTY4ODEzMDU3Mn0.aMFNb1hEWujdluywNN0M68oCeERJRWvbKrKS9zup-U8i3j_Do_Ryl7flIMKcj38KpOfSwVL2PwDH1N3iaoyxBw
 
 ###
 POST http://localhost:3000/api/users
@@ -43,12 +45,50 @@ Content-Type: application/json
 }
 
 ###
-PUT http://localhost:3000/api/users/2
+#$2a$10$.zcaM4Xi8uzR3i0oUEAQcu2budFKoXN/EHmMZbLvoQDKJks1.ECKW
+PUT http://localhost:3000/api/users/5
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6IlRlc3QiLCJpYXQiOjE2NTY1NzI5NzIsImV4cCI6MTY4ODEzMDU3Mn0.aMFNb1hEWujdluywNN0M68oCeERJRWvbKrKS9zup-U8i3j_Do_Ryl7flIMKcj38KpOfSwVL2PwDH1N3iaoyxBw
 
 {
-    "name": "Test2"
+    "name": "Test3"
 }
 
 ###
 DELETE http://localhost:3000/api/users/1
+
+###
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+    "email": "ok4@ok.com",
+    "password": "dsfcsdvcsd",
+    "name": "Test"
+}
+
+###
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email": "ok2@ok.com",
+    "password": "dsfcsdvcsd"
+}
+
+###
+
+GET http://localhost:3000/api/posts
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6IlRlc3QiLCJpYXQiOjE2NTY1NzI5NzIsImV4cCI6MTY4ODEzMDU3Mn0.aMFNb1hEWujdluywNN0M68oCeERJRWvbKrKS9zup-U8i3j_Do_Ryl7flIMKcj38KpOfSwVL2PwDH1N3iaoyxBw
+
+
+###
+
+POST http://localhost:3000/api/posts
+Content-Type: application/json 
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6IlRlc3QiLCJpYXQiOjE2NTY1NzI5NzIsImV4cCI6MTY4ODEzMDU3Mn0.aMFNb1hEWujdluywNN0M68oCeERJRWvbKrKS9zup-U8i3j_Do_Ryl7flIMKcj38KpOfSwVL2PwDH1N3iaoyxBw
+
+{
+    "title": "Test",
+    "userId": 8
+}
