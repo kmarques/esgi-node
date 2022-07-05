@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const { Post, User } = require("../models/postgres");
 const { ValidationError } = require("sequelize");
+const formatError = require("../lib/formatError");
 
 const router = new Router();
 
@@ -23,10 +24,7 @@ router.post("/posts", async (req, res) => {
     res.status(201).json(post);
   } catch (error) {
     if (error instanceof ValidationError) {
-      res.status(422).json({
-        quantity: "must be greather than 0",
-        title: "must not be empty",
-      });
+      res.status(422).json(formatError(error.errors));
     } else {
       res.sendStatus(500);
       console.error(error);
@@ -50,10 +48,7 @@ router.put("/posts/:id", async (req, res) => {
   } catch (error) {
     if (error instanceof ValidationError) {
       console.error(error);
-      res.status(422).json({
-        quantity: "must be greather than 0",
-        title: "must not be empty",
-      });
+      res.status(422).json(formatError(error.errors));
     } else {
       res.sendStatus(500);
       console.error(error);

@@ -1,4 +1,5 @@
 const { Router } = require("express");
+const formatError = require("../lib/formatError");
 const { Product, mongoose } = require("../models/mongo");
 
 const router = new Router();
@@ -19,10 +20,7 @@ router.post("/products", async (req, res) => {
     res.status(201).json(product);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      res.status(422).json({
-        quantity: "must be greather than 0",
-        title: "must not be empty",
-      });
+      res.status(422).json(formatError(Object.values(error.errors)));
     } else {
       res.sendStatus(500);
       console.error(error);
@@ -44,10 +42,7 @@ router.put("/products/:id", async (req, res) => {
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       console.error(error);
-      res.status(422).json({
-        quantity: "must be greather than 0",
-        title: "must not be empty",
-      });
+      res.status(422).json(formatError(Object.values(error.errors)));
     } else {
       res.sendStatus(500);
       console.error(error);
