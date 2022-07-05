@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const { User } = require("../models/postgres");
 const { ValidationError } = require("sequelize");
+const checkAuthentication = require("../middlewares/checkAuthentication");
 
 const router = new Router();
 
@@ -11,7 +12,7 @@ function formatError(error) {
   }, {});
 }
 
-router.get("/users", async (req, res) => {
+router.get("/users", checkAuthentication, async (req, res) => {
   try {
     const result = await User.findAll({ where: req.query });
     res.json(result);
@@ -36,7 +37,11 @@ router.post("/users", async (req, res) => {
   }
 });
 
-router.delete("/users/:id", async (req, res) => {
+router.delete("/users/:id", checkAuthentication, async (req, res) => {
+  console.log(req.user);
+  if (req.user.id !== parseInt(req.params.id, 10)) {
+    return res.sendStatus(403);
+  }
   try {
     const nbline = await User.destroy({
       where: {
@@ -52,11 +57,12 @@ router.delete("/users/:id", async (req, res) => {
   }
 });
 
-router.put("/users/:id", async (req, res) => {
+router.put("/users/:id", checkAuthentication, async (req, res) => {
   try {
     const [, rows] = await User.update(req.body, {
-      where: { id: req.params.id },
+      where: { id: parseInt(req.params.id, 10) },
       returning: true,
+      individualHooks: true,
     });
     if (!rows[0]) {
       res.sendStatus(404);
@@ -65,10 +71,7 @@ router.put("/users/:id", async (req, res) => {
     }
   } catch (error) {
     if (error instanceof ValidationError) {
-      res.status(422).json({
-        code: "must be an integer",
-        message: "must have at least 1 character",
-      });
+      res.status(422).json(formatError(error));
     } else {
       res.sendStatus(500);
       console.error(error);
@@ -76,7 +79,7 @@ router.put("/users/:id", async (req, res) => {
   }
 });
 
-router.get("/users/:id", async (req, res) => {
+router.get("/users/:id", checkAuthentication, async (req, res) => {
   try {
     const result = await User.findByPk(req.params.id);
     if (!result) {
