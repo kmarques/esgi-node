@@ -17,7 +17,7 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        length: {
+        len: {
           min: 8,
           max: 255,
         },
@@ -27,7 +27,7 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        length: {
+        len: {
           min: 1,
         },
       },

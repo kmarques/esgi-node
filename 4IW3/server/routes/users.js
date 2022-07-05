@@ -4,6 +4,13 @@ const { ValidationError } = require("sequelize");
 
 const router = new Router();
 
+function formatError(error) {
+  return error.errors.reduce((acc, err) => {
+    acc[err.path] = err.message;
+    return acc;
+  }, {});
+}
+
 router.get("/users", async (req, res) => {
   try {
     const result = await User.findAll({ where: req.query });
@@ -21,10 +28,7 @@ router.post("/users", async (req, res) => {
   } catch (error) {
     if (error instanceof ValidationError) {
       console.error(error);
-      res.status(422).json({
-        code: "must be an integer",
-        message: "must have at least 1 character",
-      });
+      res.status(422).json(formatError(error));
     } else {
       res.sendStatus(500);
       console.error(error);
@@ -57,7 +61,7 @@ router.put("/users/:id", async (req, res) => {
     if (!rows[0]) {
       res.sendStatus(404);
     } else {
-      res.json(result);
+      res.json(rows[0]);
     }
   } catch (error) {
     if (error instanceof ValidationError) {

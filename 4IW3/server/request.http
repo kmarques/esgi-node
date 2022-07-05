@@ -25,3 +25,31 @@ Content-Type: application/json
 
 ###
 DELETE http://localhost:3000/http-codes/62bd800ad7f21f3fbb2d508c
+
+#########
+GET http://localhost:3000/users
+# headers
+
+# body
+###
+GET http://localhost:3000/users/1
+
+###
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "email": "200@test.com",
+    "password": "OKOKOKOK",
+    "firstName": "The request has succeeded."
+}
+###
+PUT http://localhost:3000/users/1
+Content-Type: application/json
+
+{
+    "password": "KOKOKOKO"
+}
+
+###
+DELETE http://localhost:3000/users/1

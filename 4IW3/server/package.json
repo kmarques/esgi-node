@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "migrate": "echo migrated"
+    "start": "nodemon index.js",
+    "d:s:u": "node migrate.js"
   },
   "author": "",
   "license": "UNLICENSED",
@@ -15,5 +15,8 @@
     "mongoose": "^6.4.1",
     "pg": "^8.7.3",
     "sequelize": "^6.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.18"
   }
 }
