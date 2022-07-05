@@ -5,6 +5,7 @@ const SecurityRouter = require("./routes/security");
 const PostRouter = require("./routes/post");
 const verifyToken = require("./middlewares/verifyToken");
 const app = express();
+const logger = require("./lib/logger");
 
 app.use(express.json());
 app.use(
@@ -25,5 +26,5 @@ app.use("/", SecurityRouter);
 app.use("/api", verifyToken, ProductRouter, UserRouter, PostRouter);
 
 app.listen(process.env.PORT, () => {
-  console.log("Server is listening on port " + process.env.PORT);
+  logger.info(`Server started on port ${process.env.PORT}`);
 });

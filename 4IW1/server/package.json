@@ -17,7 +17,9 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.4.1",
     "pg": "^8.7.3",
-    "sequelize": "^6.21.2"
+    "sequelize": "^6.21.2",
+    "winston": "^3.8.1",
+    "winston-mongodb": "^5.0.7"
   },
   "devDependencies": {
     "nodemon": "^2.0.18"
