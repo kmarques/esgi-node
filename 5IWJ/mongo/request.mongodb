@@ -1,0 +1,123 @@
+// Exercices Recherches "simples"
+
+// 1) Rechercher tous les films dont la description comprend “documentary” et de catégorie “horror”
+db.Sakila_films.find({
+  $and: [{ description: /documentary/i }, { category: /^horror$/i }],
+});
+db.Sakila_films.find({
+  description: /documentary/i,
+  category: /^horror$/i,
+});
+
+// 2) Donner le nombre de films en rating “G”
+db.Sakila_films.find({ rating: "G" }).count();
+db.Sakila_films.countDocuments({ rating: "G" });
+db.Sakila_films.find({ rating: "G" }).toArray().length;
+
+// 3) Rechercher tous les films de 2013 ou 2012 dont la durée est entre 60 et 150 minutes
+db.video_movieDetails.find({
+  $or: [{ year: 2013 }, { year: 2012 }],
+  runtime: {
+    $gte: 60,
+    $lte: 150,
+  },
+});
+db.video_movieDetails.find({
+  year: { $in: [2013, 2012] },
+  runtime: {
+    $gte: 60,
+    $lte: 150,
+  },
+});
+db.video_movieDetails.find({
+  year: { $gte: 2012, $lte: 2013 },
+  runtime: {
+    $gte: 60,
+    $lte: 150,
+  },
+});
+
+// 4) Rechercher tous les films qui ont une image certified sur tomato
+db.video_movieDetails.find({ "tomato.image": "certified" });
+
+// 5) Rechercher tous les films avec l’acteur ED CHASE
+db.Sakila_films.find({
+  Actors: { $elemMatch: { "First name": "ED", "Last name": "CHASE" } },
+});
+
+// 6) Afficher tous les rating et le nombre de films pour chacun
+db.Sakila_films.aggregate([
+  {
+    $group: {
+      _id: "$Rating",
+      count: { $count: {} },
+    },
+  },
+]);
+
+db.Sakila_films.aggregate([
+  {
+    $group: {
+      _id: "$Rating",
+      count: { $sum: 1 },
+    },
+  },
+]);
+
+// 7) Afficher la liste des Acteurs contenant la liste des rated des films dans lesquelles ils ont joué. Pour chaque Rated, afficher la moyenne des notes imdb de ces films ainsi que la liste des films (titre + note). Ne prendre en compte que les films qui ont eu une note imdb > 8
+
+db.video_movieDetails.aggregate([
+  {
+    $match: {
+      "imdb.rating": { $gt: 8 },
+    },
+  },
+  {
+    $unwind: "$actors",
+  },
+  {
+    $group: {
+      _id: { actor: "$actors", rated: "$rated" },
+      films: {
+        $addToSet: {
+          title: "$title",
+          note: "$imdb.rating",
+        },
+      },
+      moyenne: { $avg: "$imdb.rating" },
+    },
+  },
+  {
+    $group: {
+        _id: "$_id.actor",
+        rated: {
+            $addToSet: {
+                rated: "$_id.rated",
+                films: "$films",
+                moyenne: "$moyenne"
+            }
+        }
+    }
+  }
+]);
+
+// 8) Lister pour chaque genre de films, les différents rated avec le pire film et le meilleur film selon imdb
+
+db.video_movieDetails.aggregate([
+    {
+        $unwind: "$genres"
+    },
+    {
+        $group: {
+            _id: { genre: "$genres", rated: "$rated" },
+            worstMovie: { $min: {
+                note: "$imdb.rating",
+                title: "$title"
+            } },
+            bestMovie: { $max: {
+                note: "$imdb.rating",
+                title: "$title"
+            } }
+        }
+    },
+]);

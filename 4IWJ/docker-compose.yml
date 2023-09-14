@@ -1,0 +1,25 @@
+services:
+  mongo:
+    image: mongo
+    ports:
+      - 127.0.0.1:27017:27017
+    volumes:
+      - mongo-data:/data/db
+      - ./SampleCollections:/SampleCollections
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    working_dir: /SampleCollections
+
+
+  node:
+    image: node:latest
+    ports:
+      - 127.0.0.1:3000:3000
+    volumes:
+      - ./backend:/home/node/app
+    working_dir: /home/node/app
+    command: echo test
+
+volumes:
+  mongo-data: {}
