@@ -1,0 +1,133 @@
+db.Sakila_films.find().limit(1);
+
+// Question 1
+db.Sakila_films.find({
+  Category: /^horror$/i,
+  Description: /documentary/i,
+});
+
+// Question 2
+db.Sakila_films.find({
+  Rating: "G",
+}).count();
+db.Sakila_films.countDocuments({
+  Rating: "G",
+});
+db.Sakila_films.find({
+  Rating: "G",
+}).toArray().length;
+
+// Question 3
+db.video_movieDetails.find({
+  $or: [{ year: 2013 }, { year: 2012 }],
+  runtime: { $gt: 60, $lt: 150 },
+});
+db.video_movieDetails.find({
+  year: { $in: [2013, 2012] },
+  runtime: { $gt: 60, $lt: 150 },
+});
+
+// Question 4
+db.video_movieDetails.find({
+  "tomato.image": "certified",
+});
+
+// Question 5
+db.Sakila_films.find({
+  Actors: {
+    $elemMatch: {
+      "First name": "ED",
+      "Last name": "CHASE",
+    },
+  },
+});
+
+// Question 6
+db.Sakila_films.aggregate([
+  {
+    $group: {
+      _id: "$Rating",
+      count: { $sum: 1 },
+    },
+  },
+]);
+
+// Question 7
+db.video_movieDetails.aggregate([
+  { $match: { "imdb.rating": { $gte: 8 } } },
+  { $unwind: "$actors" },
+  {
+    $group: {
+      _id: { actor: "$actors", rated: "$rated" },
+      avgNote: { $avg: "$imdb.rating" },
+      movies: { $addToSet: { title: "$title", note: "$imdb.rating" } },
+    },
+  },
+  {
+    $group: {
+      _id: "$_id.actor",
+      rateds: {
+        $addToSet: {
+          rated: "$_id.rated",
+          avgNote: "$avgNote",
+          movies: "$movies",
+        },
+      },
+    },
+  },
+]);
+
+db.video_movieDetails.aggregate([
+  { $unwind: "$genres" },
+  {
+    $group: {
+      _id: { genre: "$genres", rated: "$rated" },
+      pireFilm: {
+        $min: { note: "$imdb.rating", title: "$title" },
+      },
+      meilleurFilm: {
+        $max: { note: "$imdb.rating", title: "$title" },
+      },
+    },
+  },
+  {
+    $group: {
+      _id: "$id.genre",
+      rateds: {
+        $addToSet: {
+          rated: "$_id.rated",
+          pireFilm: "$pireFilm",
+          meilleurFilm: "$meilleurFilm",
+        },
+      },
+    },
+  },
+]);
+
+db.video_movieDetails.aggregate([
+  { $unwind: "$genres" },
+  { $sort: { "imdb.rating": 1, title: 1 } },
+  {
+    $group: {
+      _id: { genre: "$genres", rated: "$rated" },
+      pireFilm: {
+        $top: { note: "$imdb.rating", title: "$title" },
+      },
+      meilleurFilm: {
+        $bottom: { note: "$imdb.rating", title: "$title" },
+      },
+    },
+  },
+  {
+    $group: {
+      _id: "$id.genre",
+      rateds: {
+        $addToSet: {
+          rated: "$_id.rated",
+          pireFilm: "$pireFilm",
+          meilleurFilm: "$meilleurFilm",
+        },
+      },
+    },
+  },
+]);
