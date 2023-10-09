@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "d:s:u": "node migrate.js"
   },
   "author": "Karl",
   "license": "ISC",
@@ -16,6 +17,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.0",
     "pg": "^8.11.3",
-    "sequelize": "^6.32.1"
+    "sequelize": "^6.32.1",
+    "uuidv7": "^0.6.3"
   }
 }

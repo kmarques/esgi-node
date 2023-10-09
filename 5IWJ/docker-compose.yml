@@ -12,13 +12,29 @@ services:
     working_dir: /home/data
 
   backend:
-    image: node:alpine
+    image: node
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgres://root:password@db:5432/app
     ports:
       - 3000:3000
     working_dir: /home/app
     volumes:
       - ./backend:/home/app
     command: sh -c "npm install && npm run dev"
+    depends_on:
+      - db
+      - mongodb
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: app
+    volumes:
+      - pg-data:/var/lib/postgresql/data
 
 volumes:
   db-data: {}
+  pg-data: {}

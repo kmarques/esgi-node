@@ -1,0 +1,71 @@
+GET http://localhost:3000/
+
+###
+POST http://localhost:3000/
+
+###
+GET http://localhost:3000/users
+
+###
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "John",
+    "age": 30,
+    "email": "t@t.com",
+    "password": "aA1$aA1$"
+}
+
+###
+GET http://localhost:3000/users/fnjekdnfjekr
+
+###
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+    "name": "John",
+    "age": 30,
+    "sku": "FDZFZEF"
+}
+
+###
+POST http://localhost:3000/books
+Content-Type: application/json
+
+{
+    "name": "John",
+    "age": 30,
+    "ISBN": "FDZFZEF"
+}
+
+###
+GET http://localhost:3000/authors
+
+###
+POST http://localhost:3000/authors
+Content-Type: application/json
+
+{
+    "lastname": "Dawson"
+}
+
+###
+GET http://localhost:3000/users/018aff6d-2c04-72e8-9f08-5f4ddade10f0
+
+###
+PATCH http://localhost:3000/authors/018aff48-b172-7607-8b3b-cefe0235c5d1
+Content-Type: application/json
+
+{
+    "lastname": "Dawson3"
+}
+
+###
+PATCH http://localhost:3000/users/018aff6d-2c04-72e8-9f08-5f4ddade10f0
+Content-Type: application/json
+
+{
+    "password": "zrzef"
+}
