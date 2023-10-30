@@ -16,6 +16,8 @@ services:
     environment:
       - PORT=3000
       - DATABASE_URL=postgres://root:password@db:5432/app
+      - JWT_SECRET=secret
+      - MONGO_URL=mongodb://root:password@mongodb:27017/app?authSource=admin
     ports:
       - 3000:3000
     working_dir: /home/app

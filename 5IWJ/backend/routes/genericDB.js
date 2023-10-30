@@ -55,6 +55,7 @@ function ItemRouter({ model: Model }) {
   router.patch("/:id", async function (req, res, next) {
     try {
       const id = req.params.id;
+      console.log(req.body)
       const [_, items] = await Model.update(req.body, {
         where: { id },
         returning: true,

@@ -1,14 +1,25 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const app = express();
 const UserRouter = require("./routes/genericDB");
 const ProductRouter = require("./routes/product");
 const BookRouter = require("./routes/generic");
-const Author = require("./models/Author");
-const User = require("./models/User");
+const SecurityRouter = require("./routes/security");
+const {Author, User} = require("./models");
 const AuthorRouter = require("./routes/genericDB");
 const ValidationError = require("./errors/ValidationError");
+const checkAuth = require("./middlewares/checkAuth");
+const ArticleRouter = require("./routes/article");
+require('./mongo/db');
 
 app.use(express.json());
+app.use(cookieParser());
+
+app.use(
+  checkAuth({
+    excludePaths: ["/login", "/register"],
+  })
+);
 
 app.get(
   "/",
@@ -66,10 +77,14 @@ app.use(
   })
 );
 
+app.use("/articles", ArticleRouter());
+
+app.use(SecurityRouter);
+
 app.use(function (err, req, res, next) {
   if (err instanceof ValidationError) {
     res.status(422).json(err.errors);
-  } else if(err instanceof SyntaxError){
+  } else if (err instanceof SyntaxError) {
     res.sendStatus(400);
   } else {
     console.log("Middleware d'erreur");

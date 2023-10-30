@@ -13,7 +13,7 @@ Content-Type: application/json
 {
     "name": "John",
     "age": 30,
-    "email": "t@t.com",
+    "email": "t2@t.com",
     "password": "aA1$aA1$"
 }
 
@@ -53,19 +53,42 @@ Content-Type: application/json
 
 ###
 GET http://localhost:3000/users/018aff6d-2c04-72e8-9f08-5f4ddade10f0
+Cookies: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjAxOGI3ZmFlLWUxNDItNzZiYi05NTlkLTJhMjY5YzFhNjNjYyIsImZpcnN0bmFtZSI6bnVsbCwibGFzdG5hbWUiOm51bGwsImlhdCI6MTY5ODY1NDI5MywiZXhwIjoxNzMwMjExODkzfQ.LgTwFIg7VJuS3Ia4ODgzhl7yEnDeEmM3WgHqI5JqEIc; Path=/; HttpOnly
 
 ###
-PATCH http://localhost:3000/authors/018aff48-b172-7607-8b3b-cefe0235c5d1
+PATCH http://localhost:3000/users/018aff66-1cf9-72f4-be5e-28227e0d19c5
 Content-Type: application/json
 
 {
-    "lastname": "Dawson3"
+    "password": "Azerty1234!"
 }
 
 ###
-PATCH http://localhost:3000/users/018aff6d-2c04-72e8-9f08-5f4ddade10f0
+PATCH http://localhost:3000/users/018b7fae-e142-76bb-959d-2a269c1a63cc
 Content-Type: application/json
 
 {
     "password": "zrzef"
+}
+
+###
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email": "t2@t.com",
+    "password": "zrzef"
+}
+
+###
+GET http://localhost:3000/articles
+
+
+###
+POST http://localhost:3000/articles
+Content-Type: application/json
+
+{
+    "title": "My Article",
+    "UserId": "018aff66-1cf9-72f4-be5e-28227e0d19c5"
 }
