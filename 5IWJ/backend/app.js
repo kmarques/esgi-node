@@ -1,16 +1,16 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const app = express();
-const UserRouter = require("./routes/genericDB");
+const UserRouter = require("./routes/genericDB")({ model: User });
 const ProductRouter = require("./routes/product");
 const BookRouter = require("./routes/generic");
 const SecurityRouter = require("./routes/security");
-const {Author, User} = require("./models");
-const AuthorRouter = require("./routes/genericDB");
+const { Author, User } = require("./models");
+const AuthorRouter = require("./routes/genericDB")({ model: Author });
 const ValidationError = require("./errors/ValidationError");
 const checkAuth = require("./middlewares/checkAuth");
 const ArticleRouter = require("./routes/article");
-require('./mongo/db');
+require("./mongo/db");
 
 app.use(express.json());
 app.use(cookieParser());
