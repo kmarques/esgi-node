@@ -1,0 +1,76 @@
+GET http://localhost:3000?toto=titi
+
+###
+POST http://localhost:3000
+Content-Type: application/json
+
+{
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi",
+    "toto": "titi"
+}
+
+###
+GET http://localhost:3000/users
+###
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "email": "john@doe.fr",
+    "password": "Azerty1234!"
+}
+###
+PATCH http://localhost:3000/users/1
+Content-Type: application/json
+
+{
+    "password": "Azerty1234!"
+}
+
+###
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email": "john@doe.fr",
+    "password": "Azerty1234!"
+}
