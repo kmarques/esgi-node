@@ -1,0 +1,192 @@
+db.Sakila_films.find().limit(1);
+
+// Question 1
+db.Sakila_films.find({
+  Category: /^horror$/i,
+  Description: /documentary/i,
+});
+
+// Question 2
+db.Sakila_films.find({
+  Rating: "G",
+}).count();
+db.Sakila_films.countDocuments({
+  Rating: "G",
+});
+db.Sakila_films.find({
+  Rating: "G",
+}).toArray().length;
+
+// Question 3
+db.video_movieDetails.find({
+  $or: [{ year: 2013 }, { year: 2012 }],
+  runtime: { $gt: 60, $lt: 150 },
+});
+db.video_movieDetails.find({
+  year: { $in: [2013, 2012] },
+  runtime: { $gt: 60, $lt: 150 },
+});
+
+// Question 4
+db.video_movieDetails.find({
+  "tomato.image": "certified",
+});
+
+// Question 5
+db.Sakila_films.find({
+  "Actors.First name": "ED",
+  "Actors.Last name": "CHASE",
+  _id: 401,
+});
+db.Sakila_films.find({
+  Actors: {
+    $elemMatch: {
+      "First name": "ED",
+      "Last name": "CHASE",
+    },
+  },
+});
+
+// Question 6
+db.Sakila_films.aggregate([
+  {
+    $group: {
+      _id: "$Rating",
+      count: { $sum: 1 },
+    },
+  },
+]);
+
+// AGGREGATE
+// Question 1
+db.video_movieDetails.aggregate([
+  {
+    $match: {
+      "imdb.rating": { $gt: 8 },
+    },
+  },
+  {
+    $unwind: "$actors",
+  },
+  {
+    $group: {
+      _id: { actor: "$actors", rated: "$rated" },
+      movies: {
+        $addToSet: {
+          note: "$imdb.rating",
+          title: "$title",
+        },
+      },
+      avg_note: { $avg: "$imdb.rating" },
+    },
+  },
+  {
+    $group: {
+      _id: "$_id.actor",
+      rateds: {
+        $addToSet: {
+          rated: "$_id.rated",
+          movies: "$movies",
+          avg_note: "$avg_note",
+        },
+      },
+      avg_note: { $avg: "$avg_note" },
+    },
+  },
+]);
+
+// Attention différent si match à la fin
+db.video_movieDetails.aggregate([
+  {
+    $unwind: "$actors",
+  },
+  {
+    $group: {
+      _id: { actor: "$actors", rated: "$rated" },
+      movies: {
+        $addToSet: {
+          note: "$imdb.rating",
+          title: "$title",
+        },
+      },
+      avg_note: { $avg: "$imdb.rating" },
+    },
+  },
+  {
+    $group: {
+      _id: "$_id.actor",
+      rateds: {
+        $addToSet: {
+          rated: "$_id.rated",
+          movies: "$movies",
+          avg_note: "$avg_note",
+        },
+      },
+      avg_note: { $avg: "$avg_note" },
+    },
+  },
+  {
+    $match: {
+      "rateds.movies.note": { $gt: 8 },
+    },
+  },
+]);
+
+// Question 2
+db.video_movieDetails.aggregate([
+  {
+    $unwind: "$genres",
+  },
+  {
+    $sort: {
+      "imdb.rating": 1,
+      title: 1,
+    },
+  },
+  {
+    $group: {
+      _id: { genre: "$genres", rated: "$rated" },
+      worst_movie: {
+        $first: {
+          title: "$title",
+          note: "$imdb.rating",
+        },
+      },
+      best_movie: {
+        $last: {
+          title: "$title",
+          note: "$imdb.rating",
+        },
+      },
+    },
+  },
+  {
+    $group: {
+      _id: "$_id.genre",
+      rateds: {
+        $addToSet: {
+          rated: "$_id.rated",
+          worst_movie: "$worst_movie",
+          best_movie: "$best_movie",
+        },
+      },
+      indexedRateds: {
+        $accumulator: {
+          init: function () {
+            return {};
+          },
+          accumulate: function (state, document) {
+            if (!state[document._id.rated]) state[document._id.rated] = [];
+            state[document._id.rated].push({
+              worst_movie: document.worst_movie,
+              best_movie: document.best_movie,
+            });
+            return state;
+          },
+          accumulateArgs: ["$$CURRENT"],
+          lang: "js",
+        },
+      },
+    },
+  },
+]);
