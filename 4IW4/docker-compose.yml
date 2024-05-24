@@ -1,0 +1,39 @@
+services:
+  mongo:
+    image: mongo
+    ports:
+      - 127.0.0.1:27017:27017
+    volumes:
+      - mongo-data:/data/db
+      - ./SampleCollections:/SampleCollections
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    working_dir: /SampleCollections
+
+  node:
+    image: node:latest
+    environment:
+      PORT: 3000
+      MONGO_URL: mongodb://root:password@mongo:27017/app?authSource=admin
+      DATABASE_URL: postgres://root:password@postgres:5432/app
+      JWT_SECRET: secret
+    ports:
+      - 127.0.0.1:3000:3000
+    volumes:
+      - ./backend:/home/node/app
+    working_dir: /home/node/app
+    command: npm run dev
+
+  postgres:
+    image: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: app
+
+volumes:
+  mongo-data: {}
+  postgres-data: {}
