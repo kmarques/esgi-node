@@ -1,0 +1,37 @@
+### Register
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "email": "t2@t.com",
+    "password": "Azerty1234!"
+}
+
+### Login
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email": "t2@t.com",
+    "password": "Azerty1234!"
+}
+
+### Create Article
+POST http://localhost:3000/articles
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJpYXQiOjE3MTg3OTEzOTl9.Smb_LVZJIJMJIuwBjaoi3QvQvxq1O6KuVAV6uOEtWNY
+
+{
+    "title": "Article 1",
+    "content": "Content 1"
+}
+### Create Article Published
+POST http://localhost:3000/articles
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJpYXQiOjE3MTg3OTEzOTl9.Smb_LVZJIJMJIuwBjaoi3QvQvxq1O6KuVAV6uOEtWNY
+
+{
+    "title": "Article 1",
+    "content": "Content 1",
+    "status": "PUBLISHED"
+}

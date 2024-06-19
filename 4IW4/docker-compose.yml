@@ -24,6 +24,8 @@ services:
       - ./backend:/home/node/app
     working_dir: /home/node/app
     command: npm run dev
+    depends_on:
+      - postgres
 
   postgres:
     image: postgres

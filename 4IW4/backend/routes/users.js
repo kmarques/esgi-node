@@ -11,7 +11,7 @@ router.get("/users", async (req, res) => {
 });
 
 router.get("/users/:id", async (req, res) => {
-  const user = await User.findByPk(parseInt(req.params.id));
+  const user = await User.findByPk(parseInt(req.params.id, 10));
   if (user) {
     res.json(user);
   } else {
@@ -31,7 +31,7 @@ router.post("/users", async (req, res, next) => {
 router.delete("/users/:id", async (req, res) => {
   const result = await User.destroy({
     where: {
-      id: parseInt(req.params.id),
+      id: parseInt(req.params.id, 10),
     },
   });
 
@@ -39,6 +39,36 @@ router.delete("/users/:id", async (req, res) => {
     res.sendStatus(204);
   } else {
     res.sendStatus(404);
+  }
+});
+
+router.put("/users/:id", async (req, res, next) => {
+  try {
+    const deleted = await User.destroy({
+      where: {
+        id: parseInt(req.params.id, 10),
+      },
+    });
+    const user = await User.create(req.body);
+    res.status(deleted ? 200 : 201).json(user);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.patch("/users/:id", async (req, res, next) => {
+  try {
+    const [nbUpdated, users] = await User.update(req.body, {
+      where: {
+        id: parseInt(req.params.id, 10),
+      },
+      individualHooks: true,
+      returning: true,
+    });
+    if (nbUpdated) res.json(users[0]);
+    else res.sendStatus(404);
+  } catch (e) {
+    next(e);
   }
 });
 

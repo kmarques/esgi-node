@@ -1,13 +1,13 @@
 const { Model, DataTypes } = require("sequelize");
 
 module.exports = function (connection) {
-  class Article extends Model {
+  class Product extends Model {
     static associate(models) {
-      Article.belongsTo(models.User);
+      Product.belongsTo(models.User);
     }
   }
 
-  Article.init(
+  Product.init(
     {
       title: {
         type: DataTypes.STRING,
@@ -23,5 +23,5 @@ module.exports = function (connection) {
     }
   );
 
-  return Article;
+  return Product;
 };
