@@ -1,0 +1,141 @@
+// AGGREGATE
+// Question 1
+/*
+Afficher la liste des Acteurs contenant la liste des rated des films dans lesquelles 
+ils ont joué. 
+Pour chaque Rated, afficher la moyenne des notes imdb de ces films ainsi que la liste 
+des films (titre + note). Ne prendre en compte que les films qui ont eu une note imdb > 8
+*/
+db.video_movieDetails.aggregate([
+  {
+    $match: {
+      "imdb.rating": {
+        $gt: 8,
+      },
+    },
+  },
+  {
+    $unwind: "$actors",
+  },
+  {
+    $group: {
+      _id: {
+        actor: "$actors",
+        rated: "$rated",
+      },
+      movies: {
+        $addToSet: {
+          note: "$imdb.rating",
+          title: "$title",
+        },
+      },
+      avg_note: {
+        $avg: "$imdb.rating",
+      },
+    },
+  },
+  {
+    $group: {
+      _id: "$_id.actor",
+      rateds: {
+        $addToSet: {
+          rated: "$_id.rated",
+          avg_note: "$avg_note",
+          movies: "$movies",
+        },
+      },
+      avg_note: {
+        $avg: "$avg_note",
+      },
+    },
+  },
+]);
+
+// Question 2
+/*
+Lister pour chaque genre de films, les différents rated avec le pire film 
+et le meilleur film selon imdb
+*/
+db.video_movieDetails.aggregate([
+  {
+    $unwind:
+      /**
+       * path: Path to the array field.
+       * includeArrayIndex: Optional name for index.
+       * preserveNullAndEmptyArrays: Optional
+       *   toggle to unwind null and empty values.
+       */
+      "$genres",
+  },
+  {
+    $sort:
+      /**
+       * Provide any number of field/order pairs.
+       */
+      {
+        "imdb.rating": 1,
+      },
+  },
+  {
+    $group:
+      /**
+       * _id: The id of the group.
+       * fieldN: The first field name.
+       */
+      {
+        _id: {
+          genre: "$genres",
+          rated: "$rated",
+        },
+        worstMovie: {
+          $first: {
+            title: "$title",
+            note: "$imdb.rating",
+          },
+        },
+        bestMovie: {
+          $last: {
+            title: "$title",
+            note: "$imdb.rating",
+          },
+        },
+      },
+  },
+  {
+    $group:
+      /**
+       * _id: The id of the group.
+       * fieldN: The first field name.
+       */
+      {
+        _id: "$_id.genre",
+        rateds: {
+          $addToSet: {
+            rated: "$_id.rated",
+            bestMovie: "$bestMovie",
+            worstMovie: "$worstMovie",
+          },
+        },
+      },
+    indexedRateds: {
+      $accumulator: {
+        init: function () {
+          return {};
+        },
+        accumulate: function (state, document) {
+          if (!state[document._id.rated]) state[document._id.rated] = [];
+          state[document._id.rated].push({
+            worst_movie: document.worst_movie,
+            best_movie: document.best_movie,
+          });
+          return state;
+        },
+        merge: (state1, state2) => {
+          return state1 + state2;
+        },
+        accumulateArgs: ["$$CURRENT"],
+        lang: "js",
+      },
+    },
+  },
+]);
