@@ -14,4 +14,10 @@ for (const file of files) {
   db[model.name] = model;
 }
 
+for (const modelName in db) {
+  if (db[modelName] === connection) continue;
+  if (db[modelName].addHooks) db[modelName].addHooks(db);
+  if (db[modelName].associate) db[modelName].associate(db);
+}
+
 module.exports = db;

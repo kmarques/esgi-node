@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "node --watch server.js",
     "dev:nodemon": "nodemon -L server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "d:s:u": "node ./bin/migrate.js"
   },
   "author": "",
   "license": "ISC",

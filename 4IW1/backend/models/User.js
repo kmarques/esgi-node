@@ -1,7 +1,28 @@
 const { Model, DataTypes } = require("sequelize");
+const bcrypt = require("bcryptjs");
 
 module.exports = function (connection) {
-  class User extends Model {}
+  class User extends Model {
+    static associateToto(models) {
+      User.hasMany(models.Article);
+    }
+
+    static addHooks(models) {
+      User.addHook("beforeCreate", async (user) => {
+        user.password = await bcrypt.hash(
+          user.password,
+          await bcrypt.genSalt()
+        );
+      });
+      User.addHook("beforeUpdate", async (user, { fields }) => {
+        if (fields.includes("password"))
+          user.password = await bcrypt.hash(
+            user.password,
+            await bcrypt.genSalt()
+          );
+      });
+    }
+  }
 
   User.init(
     {

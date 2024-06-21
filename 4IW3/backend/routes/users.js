@@ -1,34 +1,28 @@
 const { Router } = require("express");
 const { User } = require("../models");
-const checkAuth = require("../middlewares/checkAuth");
-const checkRole = require("../middlewares/checkRole");
 
 const router = new Router();
 
-router.get(
-  "/users",
-  checkAuth,
-  checkRole({ roles: ["ADMIN", "COMPTA"] }),
-  async (req, res, next) => {
-    const users = await User.findAll({ where: req.query });
-
-    res.json(users);
-  }
-);
+router.get("/users", async (req, res, next) => {
+  const users = await User.findAll({
+    where: req.query,
+  });
+  res.json(users);
+});
 
 router.post("/users", async (req, res, next) => {
   try {
     const user = await User.create(req.body);
     res.status(201).json(user);
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 });
 
 router.get("/users/:id", async (req, res, next) => {
   const user = await User.findByPk(parseInt(req.params.id, 10));
-  if (user) res.json(user);
-  else res.sendStatus(404);
+  if (user) return res.json(user);
+  return res.sendStatus(404);
 });
 
 router.delete("/users/:id", async (req, res, next) => {
@@ -38,22 +32,22 @@ router.delete("/users/:id", async (req, res, next) => {
     },
   });
 
-  if (result === 1) res.sendStatus(204);
-  else {
-    res.sendStatus(404);
-  }
+  if (result === 1) return res.sendStatus(204);
+  return res.sendStatus(404);
 });
 
 router.put("/users/:id", async (req, res, next) => {
   try {
-    const id = parseInt(req.params.id, 10);
     const nbDeleted = await User.destroy({
       where: {
-        id,
+        id: parseInt(req.params.id, 10),
       },
     });
-    const user = await User.create({ id, ...req.body });
-    res.status(nbDeleted === 1 ? 200 : 201).json(user);
+    const user = await User.create({
+      id: parseInt(req.params.id, 10),
+      ...req.body,
+    });
+    res.status(nbDeleted ? 200 : 201).json(user);
   } catch (e) {
     next(e);
   }
@@ -67,8 +61,12 @@ router.patch("/users/:id", async (req, res, next) => {
       },
       returning: true,
     });
-    if (nbUpdated === 1) return res.json(users[0]);
-    res.sendStatus(404);
+
+    if (nbUpdated === 1) {
+      res.json(users[0]);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (e) {
     next(e);
   }

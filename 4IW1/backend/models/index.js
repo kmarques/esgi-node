@@ -12,4 +12,9 @@ for (const file of files) {
   db[model.name] = model;
 }
 
+for (let modelName in db) {
+  if (db[modelName] === connection) continue;
+  if (db[modelName].associateToto) db[modelName].associateToto(db);
+}
+
 module.exports = db;

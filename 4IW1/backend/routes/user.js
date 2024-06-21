@@ -1,27 +1,21 @@
 const { Router } = require("express");
 const { User } = require("../models");
-const checkAuth = require("../middlewares/checkAuth");
-const checkRole = require("../middlewares/checkRole");
 
 const router = new Router();
 
-router.get(
-  "/users",
-  checkAuth,
-  checkRole({ roles: ["ADMIN", "COMPTA"] }),
-  async (req, res, next) => {
-    const users = await User.findAll({ where: req.query });
-
-    res.json(users);
-  }
-);
+router.get("/users", async (req, res, next) => {
+  const users = await User.findAll({
+    where: req.query,
+  });
+  res.json(users);
+});
 
 router.post("/users", async (req, res, next) => {
   try {
     const user = await User.create(req.body);
     res.status(201).json(user);
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 });
 
@@ -32,13 +26,12 @@ router.get("/users/:id", async (req, res, next) => {
 });
 
 router.delete("/users/:id", async (req, res, next) => {
-  const result = await User.destroy({
+  const nbDeleted = await User.destroy({
     where: {
       id: parseInt(req.params.id, 10),
     },
   });
-
-  if (result === 1) res.sendStatus(204);
+  if (nbDeleted === 1) res.sendStatus(204);
   else {
     res.sendStatus(404);
   }
@@ -46,13 +39,12 @@ router.delete("/users/:id", async (req, res, next) => {
 
 router.put("/users/:id", async (req, res, next) => {
   try {
-    const id = parseInt(req.params.id, 10);
     const nbDeleted = await User.destroy({
       where: {
-        id,
+        id: parseInt(req.params.id, 10),
       },
     });
-    const user = await User.create({ id, ...req.body });
+    const user = await User.create(req.body);
     res.status(nbDeleted === 1 ? 200 : 201).json(user);
   } catch (e) {
     next(e);
@@ -66,9 +58,10 @@ router.patch("/users/:id", async (req, res, next) => {
         id: parseInt(req.params.id, 10),
       },
       returning: true,
+      individualHooks: true,
     });
-    if (nbUpdated === 1) return res.json(users[0]);
-    res.sendStatus(404);
+    if (nbUpdated === 1) res.json(users[0]);
+    else res.sendStatus(404);
   } catch (e) {
     next(e);
   }
