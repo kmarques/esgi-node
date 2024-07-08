@@ -1,0 +1,28 @@
+### REGISTER
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "email": "t@t.com",
+  "password": "Azerty1234!"
+}
+
+### LOGIN
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "t@t.com",
+  "password": "Azerty1234!"
+}
+
+### Create Article
+POST http://localhost:3000/articles
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE3MTg5ODE2OTB9.FAzqGAAi1T9z8lhIYA6BF6a32zYwpF8ple6FOqrpyW0
+
+{
+  "title": "Article 1",
+  "content": "Content 1",
+  "status": "DRAFT"
+}

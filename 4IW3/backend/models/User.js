@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const bcrypt = require("bcryptjs");
+const denormalizeProfile = require("../services/dernormalization/profile");
 
 module.exports = function (connection) {
   class User extends Model {
@@ -17,6 +18,19 @@ module.exports = function (connection) {
             await bcrypt.genSalt()
           );
       });
+
+      User.addHook("afterCreate", (user) => {
+        denormalizeProfile(user.id, models);
+      });
+      User.addHook("afterUpdate", (user, { fields }) => {
+        if (denormalizeProfile.accept(User, fields)) {
+          denormalizeProfile(user.id, models);
+        }
+      });
+    }
+
+    static associate(models) {
+      User.hasMany(models.Article);
     }
   }
 
@@ -34,7 +48,7 @@ module.exports = function (connection) {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          is: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
+          is: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,32}$/,
         },
       },
       lastname: DataTypes.STRING,

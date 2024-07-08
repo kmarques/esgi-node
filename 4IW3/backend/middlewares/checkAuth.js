@@ -1,3 +1,6 @@
+const jwt = require("jsonwebtoken");
+const { User } = require("../models");
+
 module.exports = async function checkAuth(req, res, next) {
   const header = req.headers.Authorization ?? req.headers.authorization;
   if (!header) return res.sendStatus(401);

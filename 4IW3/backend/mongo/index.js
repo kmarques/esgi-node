@@ -10,17 +10,8 @@ const files = fs.readdirSync(__dirname);
 for (const file of files) {
   if (["db.js", "index.js"].includes(file)) continue;
   const model = require(path.join(__dirname, file))(connection);
-  db[model.name] = model;
+  console.log(model, model.name);
+  db[model.modelName] = model;
 }
-
-for (const modelName in db) {
-  if (db[modelName] === connection) continue;
-  if (db[modelName].addHooks) {
-    db[modelName].addHooks(db);
-  }
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-}
-
+console.log(db);
 module.exports = db;
