@@ -20,4 +20,6 @@ for (const modelName in db) {
   if (db[modelName].associate) db[modelName].associate(db);
 }
 
+console.log(db);
+
 module.exports = db;

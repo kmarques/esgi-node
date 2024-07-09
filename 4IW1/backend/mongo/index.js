@@ -9,13 +9,13 @@ const db = {
 for (const file of files) {
   if (["index.js", "db.js"].includes(file)) continue;
   const model = require(path.join(__dirname, file))(connection);
-  db[model.name] = model;
+  db[model.modelName] = model;
 }
 
 for (let modelName in db) {
   if (db[modelName] === connection) continue;
   if (db[modelName].associateToto) db[modelName].associateToto(db);
-  if (db[modelName].addHooks) db[modelName].addHooks(db);
 }
 
+console.log(db);
 module.exports = db;

@@ -1,0 +1,36 @@
+GET http://localhost:3000/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE3MjA0Mjc4ODh9.2XYa31dLrykvT18VkO-aw0EBamQYoWl71WLaF1nSVww
+
+###
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "email": "test11@test.com",
+    "password": "Azerty1234!",
+    "role": "ADMIN"
+}
+###
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email": "test11@test.com",
+    "password": "Azerty1234!"
+}
+
+###
+PATCH http://localhost:3000/users/13
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE3MjA0Mjc4ODh9.2XYa31dLrykvT18VkO-aw0EBamQYoWl71WLaF1nSVww
+Content-Type: application/json
+
+{
+    "lastname": "toto",
+    "email": "test11@test.com",
+    "password": "Azerty1234!",
+    "role": "ADMIN"
+}
+
+###
+DELETE http://localhost:3000/users/13
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE3MjA0Mjc4ODh9.2XYa31dLrykvT18VkO-aw0EBamQYoWl71WLaF1nSVww

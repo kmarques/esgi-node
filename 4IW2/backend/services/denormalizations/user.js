@@ -10,7 +10,7 @@ module.exports = async (userId) => {
       order: [["createdAt", "DESC"]],
     },
   });
-  console.log(user);
+
   UserMongo.findByIdAndUpdate(user.id, user.json(), {
     upsert: true,
     new: true,

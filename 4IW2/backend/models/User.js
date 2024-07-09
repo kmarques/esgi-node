@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const bcrypt = require("bcryptjs");
+const denormalizeUser = require("../services/denormalizations/user");
 
 module.exports = function (connection, models) {
   class User extends Model {
@@ -23,10 +24,10 @@ module.exports = function (connection, models) {
           );
       });
 
-      User.addHook("afterCreate", (user) => denormalizeUser(user.id));
+      //User.addHook("afterCreate", (user) => denormalizeUser(user.id));
       User.addHook("afterUpdate", (user, { fields }) => {
-        if (fields.includes("lastname") || fields.includes("firstname"))
-          denormalizeUser(user.id);
+        if (fields.includes("lastname") || fields.includes("firstname")) return;
+        //denormalizeUser(user.id);
       });
     }
   }
@@ -49,6 +50,11 @@ module.exports = function (connection, models) {
         validate: {
           is: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,32}$/,
         },
+      },
+      role: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "ROLE_USER",
       },
     },
     {

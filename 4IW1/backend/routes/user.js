@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const { User } = require("../models");
+const checkAuth = require("../middlewares/checkAuth");
 
 const router = new Router();
 
@@ -25,7 +26,7 @@ router.get("/users/:id", async (req, res, next) => {
   else res.sendStatus(404);
 });
 
-router.delete("/users/:id", async (req, res, next) => {
+router.delete("/users/:id", checkAuth, async (req, res, next) => {
   const nbDeleted = await User.destroy({
     where: {
       id: parseInt(req.params.id, 10),
@@ -37,7 +38,7 @@ router.delete("/users/:id", async (req, res, next) => {
   }
 });
 
-router.put("/users/:id", async (req, res, next) => {
+router.put("/users/:id", checkAuth, async (req, res, next) => {
   try {
     const nbDeleted = await User.destroy({
       where: {
@@ -51,7 +52,7 @@ router.put("/users/:id", async (req, res, next) => {
   }
 });
 
-router.patch("/users/:id", async (req, res, next) => {
+router.patch("/users/:id", checkAuth, async (req, res, next) => {
   try {
     const [nbUpdated, users] = await User.update(req.body, {
       where: {

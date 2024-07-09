@@ -1,4 +1,7 @@
 const express = require("express");
+const userRouter = require("./routes/user");
+const articleRouter = require("./routes/article");
+const securityRouter = require("./routes/security");
 
 const app = express();
 
@@ -12,5 +15,9 @@ app.get("/", (req, res, next) => {
 app.get("/json", (req, res, next) => {
   res.json({ coucou: "world" });
 });
+
+app.use(securityRouter);
+app.use(userRouter);
+app.use(articleRouter);
 
 module.exports = app;

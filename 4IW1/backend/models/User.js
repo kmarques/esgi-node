@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const bcrypt = require("bcryptjs");
+const denormalizeUser = require("../services/denormalization/user");
 
 module.exports = function (connection) {
   class User extends Model {
@@ -21,6 +22,10 @@ module.exports = function (connection) {
             await bcrypt.genSalt()
           );
       });
+
+      User.addHook("afterCreate", (u) => denormalizeUser(u, models));
+      User.addHook("afterUpdate", (u) => denormalizeUser(u, models));
+      User.addHook("afterDestroy", (u) => denormalizeUser(u, models));
     }
   }
 

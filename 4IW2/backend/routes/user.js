@@ -65,6 +65,7 @@ router.patch("/users/:id", async (req, res, next) => {
       where: {
         id: parseInt(req.params.id, 10),
       },
+      individualHooks: true,
       returning: true,
     });
     if (nbUpdated === 1) return res.json(users[0]);
