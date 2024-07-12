@@ -1,4 +1,5 @@
 const { Article, User } = require("../../models");
+const { UserProfile: UserMongo } = require("../../mongo");
 
 module.exports = async (userId) => {
   const user = await User.findByPk(userId, {

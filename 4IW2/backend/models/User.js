@@ -26,8 +26,8 @@ module.exports = function (connection, models) {
 
       //User.addHook("afterCreate", (user) => denormalizeUser(user.id));
       User.addHook("afterUpdate", (user, { fields }) => {
-        if (fields.includes("lastname") || fields.includes("firstname")) return;
-        //denormalizeUser(user.id);
+        if (fields.includes("lastname") || fields.includes("firstname"))
+          denormalizeUser(user.id);
       });
     }
   }
